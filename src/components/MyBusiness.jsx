@@ -135,6 +135,10 @@ const MyBusiness = () => {
     setSaving(true);
     
     try {
+      console.log('Iniciando guardado de datos del negocio...');
+      console.log('Client ID:', client.id);
+      console.log('Business data to save:', businessInfo);
+
       // Actualizar tabla clients solo con business_name (que ya existe)
       const { error: clientError } = await supabase
         .from('clients')
@@ -143,7 +147,12 @@ const MyBusiness = () => {
         })
         .eq('id', client.id);
 
-      if (clientError) throw clientError;
+      if (clientError) {
+        console.error('Error updating clients table:', clientError);
+        throw clientError;
+      }
+
+      console.log('✅ Clients table updated successfully');
 
       // Actualizar o crear registro en business_info
       const businessDataToSave = {
@@ -173,11 +182,25 @@ const MyBusiness = () => {
         contact_info: businessInfo.business_contact_info
       };
 
-      const { error: businessError } = await supabase
-        .from('business_info')
-        .upsert(businessDataToSave, { onConflict: 'client_id' });
+      console.log('Attempting to upsert business_info with data:', businessDataToSave);
 
-      if (businessError) throw businessError;
+      const { data: businessData, error: businessError } = await supabase
+        .from('business_info')
+        .upsert(businessDataToSave, { onConflict: 'client_id' })
+        .select();
+
+      if (businessError) {
+        console.error('Error upserting business_info:', businessError);
+        console.error('Error details:', {
+          code: businessError.code,
+          message: businessError.message,
+          details: businessError.details,
+          hint: businessError.hint
+        });
+        throw businessError;
+      }
+
+      console.log('✅ Business info upserted successfully:', businessData);
 
       toast({
         title: "✅ ¡Guardado exitosamente!",
@@ -186,9 +209,16 @@ const MyBusiness = () => {
 
     } catch (error) {
       console.error('Error saving business data:', error);
+      console.error('Full error object:', {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
+      
       toast({
         title: "Error al guardar",
-        description: error.message,
+        description: error.message || 'Error desconocido al guardar los datos',
         variant: "destructive",
       });
     } finally {
