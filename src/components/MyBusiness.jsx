@@ -135,13 +135,11 @@ const MyBusiness = () => {
     setSaving(true);
     
     try {
-      // Actualizar tabla clients con información básica
+      // Actualizar tabla clients solo con business_name (que ya existe)
       const { error: clientError } = await supabase
         .from('clients')
         .update({ 
-          business_name: businessInfo.business_name,
-          business_description: businessInfo.business_description,
-          business_type: businessInfo.business_type
+          business_name: businessInfo.business_name
         })
         .eq('id', client.id);
 
