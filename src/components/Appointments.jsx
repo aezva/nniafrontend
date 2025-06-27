@@ -28,6 +28,7 @@ const Appointments = () => {
     types: ['phone', 'office', 'video'],
   });
   const [saving, setSaving] = useState(false);
+  const [hasAvailability, setHasAvailability] = useState(false);
 
   useEffect(() => {
     if (!client) return;
@@ -37,12 +38,15 @@ const Appointments = () => {
       fetchAvailability(client.id)
     ]).then(([appts, avail]) => {
       setAppointments(appts || []);
-      if (avail) {
+      if (avail && (avail.days || avail.hours || avail.types)) {
         setAvailability({
           days: avail.days ? avail.days.split(',') : [],
           hours: avail.hours || '',
           types: avail.types ? avail.types.split(',') : ['phone', 'office', 'video']
         });
+        setHasAvailability(true);
+      } else {
+        setHasAvailability(false);
       }
     }).catch(() => {
       toast({ title: 'Error', description: 'No se pudo cargar la información de citas', variant: 'destructive' });
@@ -106,6 +110,11 @@ const Appointments = () => {
               <CardDescription>Estas son las citas que NNIA ha agendado para ti.</CardDescription>
             </CardHeader>
             <CardContent>
+              {!hasAvailability && (
+                <div className="mb-4 p-4 bg-yellow-100 text-yellow-800 rounded">
+                  <b>¡Atención!</b> Primero debes configurar tu disponibilidad (días, horarios y tipos de cita) para que NNIA pueda agendar citas para ti.
+                </div>
+              )}
               {appointments.length === 0 ? (
                 <div className="text-muted-foreground">No hay citas agendadas aún.</div>
               ) : (
