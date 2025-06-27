@@ -44,7 +44,7 @@ const ChatAssistant = ({ userName }) => {
         body: JSON.stringify({
           clientId: client?.id,
           message: newMessage,
-          source: 'panel',
+          source: 'client-panel',
           threadId,
         }),
       });
