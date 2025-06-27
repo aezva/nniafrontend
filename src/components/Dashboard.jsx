@@ -61,7 +61,7 @@ const Dashboard = () => {
         const uniqueCustomerCount = 0;
 
         // Obtener próximas citas (solo 2 más próximas, status pendiente)
-        const appointments = await fetchAppointments(client.businessInfoId || client.id);
+        const appointments = await fetchAppointments(client.id);
         const now = new Date();
         const upcoming = (appointments || [])
           .filter(a => a.status === 'pending' && new Date(a.date + 'T' + a.time) >= now)
