@@ -8,6 +8,7 @@ import { Calendar, Phone, MapPin, Video, Loader2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { fetchAppointments, fetchAvailability, saveAvailability } from '@/services/appointmentsService';
+import { Navigate } from 'react-router-dom';
 
 const APPOINTMENT_TYPES = [
   { value: 'phone', label: 'Llamada Telefónica', icon: <Phone className="h-4 w-4 inline" /> },
@@ -18,7 +19,7 @@ const APPOINTMENT_TYPES = [
 const WEEKDAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 const Appointments = () => {
-  const { client, loading: authLoading } = useAuth();
+  const { client, user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [appointments, setAppointments] = useState([]);
@@ -91,10 +92,23 @@ const Appointments = () => {
     setSaving(false);
   };
 
+  // Loader profesional hasta que todo esté listo
   if (authLoading || loading) {
     return <div className="flex flex-col items-center justify-center h-64">
       <Loader2 className="h-8 w-8 animate-spin mb-2" />
       <span className="text-muted-foreground">Cargando información de tu cuenta...</span>
+    </div>;
+  }
+
+  // Redirigir a login si no hay usuario
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // Mensaje claro si no hay cliente
+  if (!client) {
+    return <div className="flex flex-col items-center justify-center h-64">
+      <span className="text-lg font-semibold text-muted-foreground">No se encontró información de tu negocio.<br/>Por favor, completa el onboarding o contacta soporte.</span>
     </div>;
   }
 
