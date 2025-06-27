@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavLink, useLocation, Link } from 'react-router-dom';
-import { LayoutDashboard, MessageSquare, Ticket, Briefcase, Bot, CreditCard, Settings, LogOut, ChevronRight, Calendar } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, Ticket, Briefcase, Bot, CreditCard, Settings, LogOut, ChevronRight, Calendar, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '../contexts/NotificationsContext';
+import { useState, useRef, useEffect } from 'react';
 
 const navItems = [{
   href: '/',
@@ -44,6 +46,19 @@ const Sidebar = ({
   const location = useLocation();
   const { toast } = useToast();
   const { user, client } = useAuth();
+  const { unreadCount, notifications, markAsRead } = useNotifications();
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef();
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleNotImplemented = () => {
     toast({
@@ -95,6 +110,34 @@ const Sidebar = ({
             </li>
           )}
         </nav>
+
+        <div className="relative flex items-center justify-center my-4">
+          <button className="relative p-2 rounded-full hover:bg-gray-100" onClick={() => setOpen(o => !o)} aria-label="Notificaciones">
+            <Bell className="w-6 h-6" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5 py-0.5">{unreadCount}</span>
+            )}
+          </button>
+          {open && (
+            <div ref={dropdownRef} className="absolute z-50 right-0 mt-2 w-80 bg-white border rounded shadow-lg max-h-96 overflow-y-auto">
+              <div className="p-3 border-b font-bold">Notificaciones</div>
+              {notifications.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">Sin notificaciones recientes.</div>
+              ) : (
+                <ul>
+                  {notifications.slice(0, 10).map(n => (
+                    <li key={n.id} className={`px-4 py-3 border-b last:border-b-0 cursor-pointer ${!n.read ? 'bg-blue-50' : ''}`}
+                        onClick={() => { markAsRead(n.id); setOpen(false); }}>
+                      <div className="font-semibold text-sm">{n.title}</div>
+                      <div className="text-xs text-muted-foreground">{n.body}</div>
+                      <div className="text-xs text-right text-gray-400">{new Date(n.created_at).toLocaleString()}</div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="p-4 border-t border-border mt-auto">
           <div className="space-y-2">
