@@ -43,7 +43,10 @@ export default function Citas2() {
         setAvailability(avail || DEFAULT_AVAILABILITY);
         setError(null);
       })
-      .catch(() => setError('No se pudo cargar la información de citas'))
+      .catch(() => {
+        setAppointments([]);
+        setError('No se pudo cargar la información de citas');
+      })
       .finally(() => setLoading(false));
   }, [client]);
 

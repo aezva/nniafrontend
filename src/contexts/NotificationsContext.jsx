@@ -14,9 +14,9 @@ export function NotificationsProvider({ children }) {
     setLoading(true);
     try {
       const notifs = await fetchNotifications(client.id);
-      setNotifications(notifs);
+      setNotifications(Array.isArray(notifs) ? notifs : []);
     } catch {
-      // opcional: manejar error
+      setNotifications([]);
     }
     setLoading(false);
   }, [client]);
