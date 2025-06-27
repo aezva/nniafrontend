@@ -18,7 +18,7 @@ const APPOINTMENT_TYPES = [
 const WEEKDAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 const Appointments = () => {
-  const { client } = useAuth();
+  const { client, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [appointments, setAppointments] = useState([]);
@@ -91,8 +91,11 @@ const Appointments = () => {
     setSaving(false);
   };
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+  if (authLoading || loading) {
+    return <div className="flex flex-col items-center justify-center h-64">
+      <Loader2 className="h-8 w-8 animate-spin mb-2" />
+      <span className="text-muted-foreground">Cargando información de tu cuenta...</span>
+    </div>;
   }
 
   return (
