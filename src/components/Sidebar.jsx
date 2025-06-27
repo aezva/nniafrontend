@@ -26,6 +26,10 @@ const navItems = [{
   label: 'Citas',
   icon: Calendar
 }, {
+  href: '/citas2',
+  label: 'Citas (nuevo)',
+  icon: Calendar
+}, {
   href: '/my-business',
   label: 'Mi Negocio',
   icon: Briefcase
@@ -104,11 +108,6 @@ const Sidebar = ({
               )}
             </NavLink>
           ))}
-          {user && (
-            <li>
-              <Link to="/citas2" className="sidebar-link">Citas (nuevo)</Link>
-            </li>
-          )}
         </nav>
 
         <div className="p-4 border-t border-border mt-auto">
