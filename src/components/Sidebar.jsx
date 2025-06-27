@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, MessageSquare, Ticket, Briefcase, Bot, CreditCard, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, Ticket, Briefcase, Bot, CreditCard, Settings, LogOut, ChevronRight, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,6 +19,10 @@ const navItems = [{
   href: '/tickets',
   label: 'Tickets',
   icon: Ticket
+}, {
+  href: '/appointments',
+  label: 'Citas',
+  icon: Calendar
 }, {
   href: '/my-business',
   label: 'Mi Negocio',
