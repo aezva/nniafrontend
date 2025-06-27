@@ -50,7 +50,10 @@ export default function Citas2() {
       <section className="space-y-6">
         <h2 className="text-xl font-semibold">Citas Agendadas</h2>
         {appointments.length === 0 ? (
-          <div className="text-muted-foreground">No hay citas agendadas aún.</div>
+          <div className="text-muted-foreground text-center p-4 bg-yellow-50 rounded border border-yellow-200">
+            <strong>No hay citas agendadas aún.</strong><br />
+            Cuando NNIA o tus clientes agenden una cita, aparecerá aquí.
+          </div>
         ) : (
           <div className="space-y-4">
             {appointments.map((appt, idx) => (
