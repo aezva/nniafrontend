@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import AppointmentPreferencesForm from './AppointmentPreferencesForm';
 import { fetchAppointments, fetchAvailability, saveAvailability } from '@/services/appointmentsService';
+import { useAuth } from '@/contexts/AuthContext';
 
 const DEFAULT_AVAILABILITY = { days: [], hours: '', types: ['phone', 'office', 'video'] };
 
 export default function Citas2() {
+  const { client, loading: authLoading } = useAuth();
   const [availability, setAvailability] = useState(DEFAULT_AVAILABILITY);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,30 +15,36 @@ export default function Citas2() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (!client) return;
     setLoading(true);
     Promise.all([
-      fetchAppointments(),
-      fetchAvailability()
+      fetchAppointments(client.id),
+      fetchAvailability(client.id)
     ])
       .then(([appts, avail]) => {
-        setAppointments(appts || []);
+        setAppointments(Array.isArray(appts) ? appts : []);
         setAvailability(avail || DEFAULT_AVAILABILITY);
         setError(null);
       })
       .catch(() => setError('No se pudo cargar la información de citas'))
       .finally(() => setLoading(false));
-  }, []);
+  }, [client]);
 
   const handleSave = async () => {
+    if (!client) return;
     setSaving(true);
     try {
-      await saveAvailability(availability);
+      await saveAvailability({ ...availability, clientId: client.id });
       setError(null);
     } catch {
       setError('No se pudo guardar la disponibilidad');
     }
     setSaving(false);
   };
+
+  if (authLoading || !client) {
+    return <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" />Cargando...</div>;
+  }
 
   return (
     <div className="max-w-2xl mx-auto py-8 space-y-8">
