@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, Link } from 'react-router-dom';
 import { LayoutDashboard, MessageSquare, Ticket, Briefcase, Bot, CreditCard, Settings, LogOut, ChevronRight, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -89,6 +89,11 @@ const Sidebar = ({
               )}
             </NavLink>
           ))}
+          {user && (
+            <li>
+              <Link to="/citas2" className="sidebar-link">Citas (nuevo)</Link>
+            </li>
+          )}
         </nav>
 
         <div className="p-4 border-t border-border mt-auto">

@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import AppTutorial from '@/components/AppTutorial';
 import WelcomeMessage from '@/components/WelcomeMessage';
+import Citas2Page from '@/pages/Citas2';
 
 const ClientPanel = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -69,6 +70,7 @@ const ClientPanel = () => {
               <Route path="/assistant" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><AIAssistant /></motion.div>} />
               <Route path="/subscription" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><Subscription /></motion.div>} />
               <Route path="/settings" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><Settings /></motion.div>} />
+              <Route path="/citas2" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><Citas2Page /></motion.div>} />
             </Routes>
           </AnimatePresence>
         </div>
