@@ -22,7 +22,7 @@ const navItems = [{
   label: 'Tickets',
   icon: Ticket
 }, {
-  href: '/citas2',
+  href: '/citas',
   label: 'Citas',
   icon: Calendar
 }, {

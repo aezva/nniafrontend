@@ -7,10 +7,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from '@/components/ui/use-toast';
 import ChatAssistant from './ChatAssistant';
+import { useNavigate } from 'react-router-dom';
+import { fetchAppointments } from '@/services/appointmentsService';
 
 const Dashboard = () => {
   const { client } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalConversations: 0,
     openTickets: 0,
@@ -18,6 +21,7 @@ const Dashboard = () => {
     resolutionRate: 0
   });
   const [loading, setLoading] = useState(true);
+  const [nextAppointments, setNextAppointments] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -56,6 +60,15 @@ const Dashboard = () => {
         // Por ahora, usar un valor fijo ya que no tenemos customer_id en messages
         const uniqueCustomerCount = 0;
 
+        // Obtener próximas citas (solo 2 más próximas, status pendiente)
+        const appointments = await fetchAppointments(client.businessInfoId || client.id);
+        const now = new Date();
+        const upcoming = (appointments || [])
+          .filter(a => a.status === 'pending' && new Date(a.date + 'T' + a.time) >= now)
+          .sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time))
+          .slice(0, 2);
+        setNextAppointments(upcoming);
+
         setStats({
           totalConversations: messageCount || 0,
           openTickets: openTicketCount || 0,
@@ -76,7 +89,7 @@ const Dashboard = () => {
     };
 
     fetchDashboardData();
-  }, [client, toast]);
+  }, [client, toast, navigate]);
 
   const statsData = [
     { 
@@ -168,11 +181,48 @@ const Dashboard = () => {
                   <p className={`text-xs ${stat.change.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
                     {stat.change} vs el mes pasado
                   </p>
+                  <button
+                    className="mt-2 text-xs text-blue-600 hover:underline bg-transparent border-none p-0 cursor-pointer"
+                    onClick={() => {
+                      if (stat.title.includes('Conversaciones')) navigate('/messages');
+                      else if (stat.title.includes('Tickets')) navigate('/tickets');
+                      else if (stat.title.includes('Clientes')) navigate('/my-business');
+                    }}
+                  >
+                    Ver todas
+                  </button>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Próximas citas */}
+        <Card className="bg-card/50 backdrop-blur-sm">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base font-semibold">Próximas citas</CardTitle>
+            <button
+              className="text-xs text-blue-600 hover:underline bg-transparent border-none p-0 cursor-pointer"
+              onClick={() => navigate('/citas')}
+            >
+              Ver todas
+            </button>
+          </CardHeader>
+          <CardContent>
+            {nextAppointments.length === 0 ? (
+              <div className="text-muted-foreground text-sm">No hay citas próximas.</div>
+            ) : (
+              <ul className="divide-y divide-border">
+                {nextAppointments.map((appt, idx) => (
+                  <li key={appt.id || idx} className="py-3 flex flex-col gap-1">
+                    <div className="font-medium text-sm">{appt.name} ({appt.email})</div>
+                    <div className="text-xs text-muted-foreground">{appt.type} - {appt.date} {appt.time}</div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
 
         <motion.div
           className="grid gap-6 lg:grid-cols-2"
