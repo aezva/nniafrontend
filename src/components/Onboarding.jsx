@@ -11,11 +11,13 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from "@/components/ui/use-toast";
+import AppointmentPreferencesForm from './AppointmentPreferencesForm';
 
 const steps = [
   { id: 1, name: 'Perfil de Usuario', fields: ['name', 'businessName'] },
   { id: 2, name: 'Datos del Negocio', fields: ['website', 'services', 'opening_hours'] },
-  { id: 3, name: 'Finalizar' },
+  { id: 3, name: 'Preferencias de Citas' },
+  { id: 4, name: 'Finalizar' },
 ];
 
 const Onboarding = () => {
@@ -28,6 +30,11 @@ const Onboarding = () => {
     website: '',
     services: '',
     opening_hours: '',
+  });
+  const [availability, setAvailability] = useState({
+    days: [],
+    hours: '',
+    types: ['phone', 'office', 'video'],
   });
 
   const next = () => setCurrentStep((prev) => (prev < steps.length - 1 ? prev + 1 : prev));
@@ -57,6 +64,9 @@ const Onboarding = () => {
         website: formData.website,
         services: formData.services,
         opening_hours: formData.opening_hours,
+        appointment_days: availability.days.join(','),
+        appointment_hours: availability.hours,
+        appointment_types: availability.types.join(','),
       });
       if (businessInfoError) throw businessInfoError;
 
@@ -95,6 +105,8 @@ const Onboarding = () => {
       case 1:
         return <Step2 formData={formData} handleInputChange={handleInputChange} />;
       case 2:
+        return <AppointmentPreferencesForm availability={availability} setAvailability={setAvailability} saving={false} onSave={() => {}} />;
+      case 3:
         return <Step3 />;
       default:
         return null;
