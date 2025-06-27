@@ -20,4 +20,14 @@ export async function fetchAvailability(clientId) {
 export async function saveAvailability({ clientId, days, hours, types }) {
   const res = await axios.post(`${API_URL}/nnia/availability`, { clientId, days, hours, types });
   return res.data.availability;
+}
+
+export async function updateAppointment(id, updates) {
+  const res = await axios.put(`${API_URL}/nnia/appointments/${id}`, updates);
+  return res.data.appointment;
+}
+
+export async function deleteAppointment(id) {
+  const res = await axios.delete(`${API_URL}/nnia/appointments/${id}`);
+  return res.data.success;
 } 
