@@ -14,7 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import AppTutorial from '@/components/AppTutorial';
 import WelcomeMessage from '@/components/WelcomeMessage';
-import Citas2Page from '@/pages/Citas2';
+import AppointmentsPage from '@/pages/Citas2';
 import Topbar from './Topbar';
 
 const ClientPanel = () => {
@@ -72,7 +72,7 @@ const ClientPanel = () => {
                 <Route path="/assistant" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><AIAssistant /></motion.div>} />
                 <Route path="/subscription" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><Subscription /></motion.div>} />
                 <Route path="/settings" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><Settings /></motion.div>} />
-                <Route path="/citas2" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><Citas2Page /></motion.div>} />
+                <Route path="/citas2" element={<motion.div initial="initial" animate="in" exit="out" variants={pageVariants} transition={pageTransition}><AppointmentsPage /></motion.div>} />
               </Routes>
             </AnimatePresence>
           </div>

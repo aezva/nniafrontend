@@ -22,12 +22,8 @@ const navItems = [{
   label: 'Tickets',
   icon: Ticket
 }, {
-  href: '/appointments',
-  label: 'Citas',
-  icon: Calendar
-}, {
   href: '/citas2',
-  label: 'Citas (nuevo)',
+  label: 'Citas',
   icon: Calendar
 }, {
   href: '/my-business',
